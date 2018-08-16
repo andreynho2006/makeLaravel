@@ -37,7 +37,8 @@ class NewCommand extends Command
         //dawnload nightly version of laravel
         //extract zip file
         $this->download($zipFile = $this->makeFileName())
-             ->extract($zipFile, $directory);
+             ->extract($zipFile, $directory)
+             ->cleanUp($zipFile);
         
         //alert usert that they are ready to go
         $output->writeln('<comment>Application ready</comment>');
@@ -74,6 +75,14 @@ class NewCommand extends Command
         $archive->open($zipFile);
         $archive->extractTo($directory);
         $archive->close();
+
+        return $this;
+    }
+
+    private function cleanUp($zipFile)
+    {
+        @chmod($zipFile, 0077);
+        @unlink($zipFile);
 
         return $this;
     }
