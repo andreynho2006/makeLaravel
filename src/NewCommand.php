@@ -32,6 +32,9 @@ class NewCommand extends Command
     {
         //assert that the folder not exist
         $directory = getcwd() . '/' . $input->getArgument('name');
+
+        $output->writeln('<comment>Crafting application....</comment>');
+
         $this->asertApplicationDoesNotExist($directory, $output);
 
         //dawnload nightly version of laravel
