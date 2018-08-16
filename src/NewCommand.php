@@ -8,6 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use GuzzleHttp\ClientInterface;
+use ZipArchive;
 
 class NewCommand extends Command 
 {
@@ -16,6 +17,8 @@ class NewCommand extends Command
     public function __construct(ClientInterface $client)
     {
         $this->client = $client;
+
+        parent::__construct();
     }
 
     public function configure()
@@ -32,12 +35,12 @@ class NewCommand extends Command
         $this->asertApplicationDoesNotExist($directory, $output);
 
         //dawnload nightly version of laravel
-        $this->download($this->makeFileName())
-             ->extract();
         //extract zip file
-
-
+        $this->download($zipFile = $this->makeFileName())
+             ->extract($zipFile, $directory);
+        
         //alert usert that they are ready to go
+        $output->writeln('<comment>Application ready</comment>');
     }
 
     private function asertApplicationDoesNotExist($directory, OutputInterface $output)
@@ -59,7 +62,18 @@ class NewCommand extends Command
     {
         $response = $this->client->get('http://cabinet.laravel.com/latest.zip')->getBody();
 
-        file_put_content($zipfile, $response);
+        file_put_contents($zipfile, $response);
+
+        return $this;
+    }
+
+    private function extract($zipFile, $directory)
+    {
+        $archive = new ZipArchive;
+
+        $archive->open($zipFile);
+        $archive->extractTo($directory);
+        $archive->close();
 
         return $this;
     }

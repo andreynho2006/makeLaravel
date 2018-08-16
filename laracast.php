@@ -8,6 +8,6 @@ require 'vendor/autoload.php';
 
 $app = new Application('Laracast Demo', '1.0');
 
-$app->add(new NewCommand);
+$app->add(new NewCommand(new GuzzleHttp\Client));
 
 $app->run();
