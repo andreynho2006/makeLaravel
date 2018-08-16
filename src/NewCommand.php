@@ -58,6 +58,10 @@ class NewCommand extends Command
     private function download($zipfile)
     {
         $response = $this->client->get('http://cabinet.laravel.com/latest.zip')->getBody();
+
+        file_put_content($zipfile, $response);
+
+        return $this;
     }
 }
 
